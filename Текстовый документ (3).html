@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHANYRAQ - Тарих және Тест</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Oswald:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #020c1b;
+            --secondary: #112240;
+            --accent: #D4AF37;
+            --text-light: #ccd6f6;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        body { background-color: var(--primary); color: var(--text-light); scroll-behavior: smooth; overflow-x: hidden; }
+
+        header {
+            background: rgba(10, 25, 47, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed; width: 100%; top: 0; z-index: 1000;
+            border-bottom: 2px solid var(--accent);
+        }
+        .lang-bar { background: rgba(0,0,0,0.3); text-align: center; padding: 5px; }
+        .lang-btn { 
+            background: transparent; border: 1px solid var(--accent); color: var(--accent);
+            padding: 3px 12px; margin: 0 5px; cursor: pointer; border-radius: 20px; font-size: 0.75rem;
+            transition: 0.3s;
+        }
+        .lang-btn.active { background: var(--accent); color: var(--primary); }
+
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 10px 5%; }
+        .logo { display: flex; align-items: center; gap: 12px; color: var(--accent); text-decoration: none; }
+        
+        .shanyraq-icon {
+            width: 45px;
+            height: 45px;
+            stroke: var(--accent);
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .nav-links { display: flex; list-style: none; gap: 20px; }
+        .nav-links a { color: white; text-decoration: none; font-size: 0.85rem; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
+        .nav-links a:hover { color: var(--accent); }
+
+        .section { padding: 120px 5% 60px; display: none; }
+        .section.active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .section-header { text-align: center; margin-bottom: 50px; }
+        .section-header h2 { font-family: 'Oswald', sans-serif; font-size: 3rem; color: var(--accent); text-transform: uppercase; }
+        .divider { width: 100px; height: 4px; background: var(--accent); margin: 15px auto; }
+
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-top: 40px; }
+        .info-card { 
+            background: var(--secondary); padding: 30px; border-radius: 15px; 
+            border-left: 5px solid var(--accent); transition: 0.3s;
+            display: flex; flex-direction: column;
+        }
+        .info-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .info-card h3 { color: var(--accent); margin-bottom: 15px; font-family: 'Oswald'; font-size: 1.5rem; }
+        .info-card p { line-height: 1.6; font-size: 0.9rem; margin-bottom: 10px; font-weight: bold; }
+        .info-card ul { padding-left: 20px; list-style-type: square; color: var(--text-light); opacity: 0.9; font-size: 0.85rem; }
+        .info-card ul li { margin-bottom: 8px; line-height: 1.4; }
+
+        .pdf-link-box {
+            background: var(--secondary); padding: 30px; border-radius: 15px; 
+            text-align: center; margin: 20px auto 40px; border: 2px solid var(--accent); max-width: 600px;
+        }
+
+        .cta-btn {
+            display: inline-block; background: var(--accent); color: var(--primary); padding: 15px 35px;
+            border: none; border-radius: 50px; font-weight: bold; cursor: pointer;
+            text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; transition: 0.3s;
+            text-decoration: none; margin-top: 20px;
+        }
+        .cta-btn:hover { background: #fff; transform: scale(1.05); }
+
+        .quiz-container { max-width: 800px; margin: 0 auto; background: var(--secondary); padding: 40px; border-radius: 20px; border: 1px solid rgba(212, 175, 55, 0.3); position: relative; }
+        .quiz-progress { margin-bottom: 20px; font-size: 1rem; color: var(--accent); font-weight: bold; }
+        .question-box { font-size: 1.2rem; margin-bottom: 25px; line-height: 1.4; min-height: 80px; }
+        .options-grid { display: grid; gap: 12px; }
+        .option-btn { 
+            background: rgba(2, 12, 27, 0.6); border: 1px solid rgba(212, 175, 55, 0.4); color: white; 
+            padding: 14px 20px; border-radius: 10px; cursor: pointer; text-align: left; font-size: 1rem; transition: 0.2s;
+        }
+        .option-btn:hover:not(:disabled) { background: rgba(212, 175, 55, 0.15); border-color: var(--accent); }
+        .option-btn.correct { background: var(--success) !important; color: white; border-color: var(--success); }
+        .option-btn.wrong { background: var(--danger) !important; color: white; border-color: var(--danger); }
+        
+        .hero-banner {
+            min-height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; background: linear-gradient(rgba(2,12,27,0.85), rgba(2,12,27,0.85)), url('https://images.unsplash.com/photo-1541447271487-09612b3f49f7?q=80&w=1600');
+            background-size: cover; background-position: center; border-bottom: 3px solid var(--accent);
+            padding: 40px 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="lang-bar">
+            <button class="lang-btn active" id="lang-kk" onclick="setLang('kk')">ҚАЗАҚША</button>
+            <button class="lang-btn" id="lang-ru" onclick="setLang('ru')">РУССКИЙ</button>
+            <button class="lang-btn" id="lang-en" onclick="setLang('en')">ENGLISH</button>
+        </div>
+        <nav class="navbar">
+            <a href="#" class="logo" onclick="nav('hero')">
+                <svg class="shanyraq-icon" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" />
+                    <path d="M20 35 Q 50 10 80 35" />
+                    <path d="M20 50 Q 50 25 80 50" />
+                    <path d="M20 65 Q 50 40 80 65" />
+                    <path d="M35 20 Q 10 50 35 80" stroke-opacity="0.6"/>
+                    <path d="M50 20 Q 25 50 50 80" />
+                    <path d="M65 20 Q 40 50 65 80" />
+                </svg>
+                <h2 style="font-family: 'Oswald', sans-serif; letter-spacing: 2px;">SHANYRAQ</h2>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#" onclick="nav('hero')" id="nav-home">Басты бет</a></li>
+                <li><a href="#" onclick="nav('comic')" id="nav-comic">Комикс</a></li>
+                <li><a href="#" onclick="nav('quiz')" id="nav-quiz">Тест</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="hero" class="section active">
+        <div class="hero-banner">
+            <h1 id="hero-title" style="font-size: 3.5rem; color: var(--accent); font-family: 'Oswald';">АҚБҰЛАҚТЫҢ АЩЫ ЖАСЫ</h1>
+            <p id="hero-desc" style="max-width: 800px; margin-top: 15px; font-size: 1.1rem; line-height: 1.4;">ЕРЕУІЛ АТҚА ЕР САЛҒАНДАРДЫҢ АМАНАТЫ</p>
+            <button class="cta-btn" onclick="nav('quiz')" id="hero-btn">Тестті бастау</button>
+        </div>
+
+        <div class="grid-cards" id="dynamic-cards"></div>
+    </section>
+
+    <section id="comic" class="section">
+        <div class="section-header">
+            <h2 id="com-title">Махамбет Комиксі</h2>
+            <div class="divider"></div>
+        </div>
+        <div class="pdf-link-box">
+            <p id="com-desc" style="margin-bottom: 20px;">Махамбет Өтемісұлының ерлігі мен өр рухын бейнелейтін графикалық туындыны оқыңыз.</p>
+            <a href="https://drive.google.com/file/d/1ApQcbgqwwXa-p_g4d7QUZDloxVGRkVKM/view?usp=sharing" target="_blank" class="cta-btn">
+                <i class="fas fa-book-open" style="margin-right: 10px;"></i> Open PDF Comic
+            </a>
+        </div>
+    </section>
+
+    <section id="quiz" class="section">
+        <div class="section-header">
+            <h2 id="quiz-title">Бөкей Ордасы: 1836-1838 жылдардағы көтеріліс</h2>
+            <div class="divider"></div>
+        </div>
+
+        <div class="quiz-container" id="quiz-app">
+            <div id="quiz-box">
+                <div class="quiz-progress" id="quiz-progress">Сұрақ: 1 / 41</div>
+                <div class="question-box" id="question-text">Жүктелуде...</div>
+                <div class="options-grid" id="options-box"></div>
+            </div>
+            <div id="result-box" style="display:none; text-align:center;">
+                <h2 id="res-title" style="color: var(--accent); margin-bottom: 20px;">Тест аяқталды!</h2>
+                <div style="font-size: 3rem; margin-bottom: 20px;" id="final-score">0 / 41</div>
+                <button class="cta-btn" onclick="restartQuiz()" id="res-btn">Қайта бастау</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Жаңа сұрақтар базасы (пайдаланушы жіберген 20-60 сұрақтар)
+        const quizData = [
+            { k:"1836-1838 жылдардағы көтеріліс қамтыды", r:"Восстание 1836-1838 гг. охватило", e:"The uprising of 1836-1838 covered", a:{k:["Сібір хандығы","Ноғай Ордасы","Бөкей Ордасы","Қазан хандығы"], r:["Сибирское ханство","Ногайскую Орду","Букеевскую Орду","Казанское ханство"], e:["Siberian Khanate","Nogai Horde","Bukey Horde","Kazan Khanate"]}, c:2 },
+            { k:"И.Тайманұлы мен М.Өтемісұлы бастаған көтерілістің басты мақсаты", r:"Главная цель восстания под руководством И. Тайманулы и М. Утемисулы", e:"The main goal of the uprising led by I. Taymanuly and M. Utemisuly", a:{k:["Дәстүрлі билікті тоқтату","Хандық билікті толық жою","Хан озбырлығына шек қою","Әскери бекіністер салу"], r:["Прекращение традиционной власти","Полная ликвидация ханской власти","Ограничение ханского произвола","Строительство военных крепостей"], e:["Stopping traditional rule","Complete abolition of khanate power","Limiting khan's tyranny","Building military forts"]}, c:2 },
+            { k:"И.Тайманұлы мен М.Өтемісұлы бастаған көтерілістің басты мақсаты", r:"Главная цель восстания под руководством И. Тайманулы и М. Утемисулы", e:"The main goal of the uprising led by I. Taymanuly and M. Utemisuly", a:{k:["Бабажанұлын билікке әкелу","Округтердің қалыптастыру","Юсуповқа жер беру","Жер мәселесін шешу"], r:["Приход Бабажанулы к власти","Формирование округов","Передача земли Юсупову","Решение земельного вопроса"], e:["Bringing Babajanuly to power","Formation of districts","Giving land to Yusupov","Solving the land issue"]}, c:3 },
+            { k:"Бөкей Ордасындағы көтерілістің шығу себептері", r:"Причины восстания в Букеевской Орде", e:"Causes of the uprising in the Bukey Horde", a:{k:["Жәңгір хан саясатында жетістіктердің көп болуы","Қарауылқожа Бабажанұлының ағартушылығы","Юсупов пен Безбородьконың қазақтарға жер беруі","Жәңгір хан жанындағы ақсүйектердің озбырлығы"], r:["Многочисленные успехи в политике Жангир хана","Просветительство Караулкожи Бабажанулы","Передача земли казахам Юсуповым и Безбородько","Произвол знати при Жангир хане"], e:["Numerous successes in Zhangir Khan's policy","Enlightenment of Karaulkozha Babajanuly","Yusupov and Bezborodko giving land to Kazakhs","Tyranny of the elite under Zhangir Khan"]}, c:3 },
+            { k:"1836-1838 жылдары көтерілістің басты себебі", r:"Главная причина восстания 1836-1838 гг.", e:"The main cause of the 1836-1838 uprising", a:{k:["Әскери шептердің жойылуы","Жердің жетіспеушілігі","Хандық биліктің жойылуы","Округтердің құрылуы"], r:["Ликвидация военных линий","Нехватка земли","Ликвидация ханской власти","Создание округов"], e:["Abolition of military lines","Lack of land","Abolition of khanate power","Creation of districts"]}, c:1 },
+            { k:"Исатай мен Махамбет бастаған көтеріліс болды", r:"Восстание под руководством Исатая и Махамбета произошло в", e:"The uprising led by Isatay and Makhambet occurred in", a:{k:["1825-1836 жж.","1856-1857 жж.","1837-1847 жж.","1836-1838 жж."], r:["1825-1836 гг.","1856-1857 гг.","1837-1847 гг.","1836-1838 гг."], e:["1825-1836","1856-1857","1837-1847","1836-1838"]}, c:3 },
+            { k:"Исатай мен Махамбет бастаған көтеріліс болды", r:"Восстание под руководством Исатая и Махамбета охватило", e:"The uprising led by Isatay and Makhambet took place in", a:{k:["Торғай мен Орал облыстарының жері","Торғай мен Жетісу облыстары аумағы","Еділ мен Жайық өзендерінің аралығы","Маңғыстау мен Каспийдің солтүстігі"], r:["Земли Тургайской и Уральской областей","Территории Тургайской и Семиреченской областей","Междуречье Волги и Урала (Жайыка)","Мангистау и север Каспия"], e:["Lands of Turgay and Ural regions","Territories of Turgay and Zhetysu regions","Area between Volga and Ural (Zhayik) rivers","Mangistau and North Caspian"]}, c:2 },
+            { k:"1836-1838 жылдары шаруалар көтерілісін басқарған, жырларымен көтерілісшілерді рухтандырған ақын", r:"Поэт, возглавивший крестьянское восстание 1836-1838 гг. и вдохновлявший восставших своими стихами", e:"The poet who led the 1836-1838 peasant uprising and inspired the rebels with his poems", a:{k:["Сырым Датұлы","Исатай Тайманұлы","Махамбет Өтемісұлы","Кенесары Қасымұлы"], r:["Сырым Датов","Исатай Тайманулы","Махамбет Утемисулы","Кенесары Касымулы"], e:["Syrym Datuly","Isatay Taymanuly","Makhambet Utemisuly","Kenesary Kasymuly"]}, c:2 },
+            { k:"1791-1838 жылдары өмір сүрген қазақ батыры", r:"Казахский батыр, живший в 1791-1838 гг.", e:"Kazakh hero who lived between 1791 and 1838", a:{k:["Махамбет Өтемісұлы","Кенесары Қасымұлы","Сырым Датұлы","Исатай Тайманұлы"], r:["Махамбет Утемисулы","Кенесары Касымулы","Сырым Датов","Исатай Тайманулы"], e:["Makhambet Utemisuly","Kenesary Kasymuly","Syrym Datuly","Isatay Taymanuly"]}, c:3 },
+            { k:"Исатай Тайманұлы старшын болып сайланған ру", r:"Род, в котором Исатай Тайманулы был избран старшиной", e:"The clan in which Isatay Taymanuly was elected as an elder", a:{k:["Адай","Табын","Беріш","Шекті"], r:["Адай","Табын","Бериш","Шекты"], e:["Aday","Tabyn","Berish","Shekti"]}, c:2 },
+            { k:"Махамбет Өтемісұлы өмір сүрді", r:"Махамбет Утемисулы жил в годы", e:"Makhambet Utemisuly lived in the years", a:{k:["1791-1838 жж.","1845-1904 жж.","1803-1846 жж.","1835-1865 жж."], r:["1791-1838 гг.","1845-1904 гг.","1803-1846 гг.","1835-1865 гг."], e:["1791-1838","1845-1904","1803-1846","1835-1865"]}, c:2 },
+            { k:"Махамбет Өтемісұлы жақсы қарым-қатынаста болған орыс ғалымдары", r:"Русские ученые, с которыми Махамбет Утемисулы был в хороших отношениях", e:"Russian scientists with whom Makhambet Utemisuly had good relations", a:{k:["М.Черняев, Г.Колпаковский","О.А.Игельстром, П.Столыпин","М.Сперанский, П.Эссен","Г.Карелин, В.Даль"], r:["М. Черняев, Г. Колпаковский","О.А. Игельстром, П. Столыпин","М. Сперанский, П. Эссен","Г. Карелин, В. Даль"], e:["M. Chernyaev, G. Kolpakovsky","O.A. Igelstrom, P. Stolypin","M. Speransky, P. Essen","G. Karelin, V. Dal"]}, c:3 },
+            { k:"Бөкей Ордасында болған көтерілістің мақсаты өлеңдерінде айқын көрінеді", r:"Цель восстания в Букеевской Орде четко отражена в стихах", e:"The purpose of the uprising in the Bukey Horde is clearly reflected in the poems of", a:{k:["С.Қасымұлы","И.Тайманұлы","М.Өтемісұлы","Қ.Абылайұлы"], r:["С. Касымулы","И. Тайманулы","М. Утемисулы","К. Аблайулы"], e:["S. Kasymuly","I. Taymanuly","M. Utemisuly","K. Ablaiuly"]}, c:2 },
+            { k:"1836-1838 жылдары Бөкей Ордасында болған көтерілістің басты қозғаушы күші", r:"Главная движущая сила восстания 1836-1838 гг. в Букеевской Орде", e:"The main driving force of the 1836-1838 uprising in the Bukey Horde", a:{k:["Сібір казактары","Башқұрттар","Қазақ шаруалары","Қырғыздар"], r:["Сибирские казаки","Башкиры","Казахские шаруа (крестьяне)","Киргизы"], e:["Siberian Cossacks","Bashkirs","Kazakh peasants (sharua)","Kyrgyz"]}, c:2 },
+            { k:"Ішкі Бөкей ордасындағы ұлт-азаттық көтеріліс созылды", r:"Национально-освободительное восстание во Внутренней Букеевской орде длилось", e:"The national liberation uprising in the Inner Bukey Horde lasted for", a:{k:["Екі жылға","Он төрт жылға","Он жылға","Деті жылға"], r:["Два года","Четырнадцать лет","Десять лет","Семь лет"], e:["Two years","Fourteen years","Ten years","Seven years"]}, c:0 },
+            { k:"1836 жылы Исатай Тайманұлының ашық шабуылға шығу себебі", r:"Причина открытого выступления Исатая Тайманулы в 1836 году", e:"The reason for Isatay Taymanuly's open offensive in 1836", a:{k:["Елек бойында әскери шептің салынуы","Батыс Сібір губернаторына хат жазуы","Хан ордасына қыр көрсетіп, хан шақыруынан бас тартуы","Хандық билік жойылуы"], r:["Строительство военной линии вдоль Илека","Письмо губернатору Западной Сибири","Вызов ханской ставке и отказ явиться по приглашению хана","Ликвидация ханской власти"], e:["Construction of a military line along Ilek","Writing a letter to the Governor of West Siberia","Defiance of the Khan's court and refusal of the invitation","Abolition of khanate power"]}, c:2 },
+            { k:"Исатай батыр Жәңгір ханға өтінішін табыс еткен жер", r:"Место, где батыр Исатай вручил свое прошение Жангир хану", e:"The place where Isatay batyr handed his petition to Zhangir Khan", a:{k:["Кекілік Сеңгір шатқалы","Майтөбе","Толыбай шатқалы","Итішпес Алакөл"], r:["Ущелье Кекилик Сенгир","Майтобе","Ущелье Толыбай","Итишпес Алаколь"], e:["Kekilik Sengir gorge","Maitobe","Tolybay gorge","Itishpes Alakol"]}, c:2 },
+            { k:"1836-1838 жылдары Бөкей Ордасындағы көтеріліс кезінде Жәңгір ханды қолдаған сыбайластары", r:"Союзники, поддержавшие Жангир хана во время восстания 1836-1838 гг.", e:"Allies who supported Zhangir Khan during the 1836-1838 uprising", a:{k:["Махамбет Өтемісұлы, Қоңырқұлжа","Қарауылқожа Бабажанұлы, Балқы Құдайбергенұлы","Исатай Тайманұлы, Қоңырқұлжа","Сырым Датұлы, Кенесары Қасымұлы"], r:["Махамбет Утемисулы, Коныркулжа","Караулкожа Бабажанулы, Балкы Кудайбергенулы","Исатай Тайманулы, Коныркулжа","Сырым Датов, Кенесары Касымулы"], e:["Makhambet Utemisuly, Konirkulzha","Karaulkozha Babajanuly, Balky Kudaybergenuly","Isatay Taymanuly, Konirkulzha","Syrym Datuly, Kenesary Kasymuly"]}, c:1 },
+            { k:"1836-1838 жылдары көтеріліске түрткі болған жағдай", r:"Ситуация, ставшая поводом для восстания 1836-1838 гг.", e:"The situation that triggered the 1836-1838 uprising", a:{k:["Округтердің жаппай ашылуы","Қарауылқожаның Каспий өңіріндегі руларға билеуші болып тағайындалуы","Хандық биліктің жойылуы","Жетісудың Ресейге өтуі"], r:["Массовое открытие округов","Назначение Караулкожи правителем родов Прикаспия","Ликвидация ханской власти","Переход Семиречья к России"], e:["Mass opening of districts","Appointment of Karaulkozha as ruler of Caspian clans","Abolition of khanate power","Zhetysu passing to Russia"]}, c:1 },
+            { k:"Исатай Тайманұлы келіссөз жүргізген генерал-губернатор", r:"Генерал-губернатор, с которым Исатай Тайманулы вел переговоры", e:"The Governor-General with whom Isatay Taymanuly negotiated", a:{k:["П.Эссен","В.Перовский","О.Игельстром","М.Сперанский"], r:["П. Эссен","В. Перовский","О. Игельстром","М. Сперанский"], e:["P. Essen","V. Perovsky","O. Igelstrom","M. Speransky"]}, c:1 },
+            { k:"1837 жылы қазанда Исатай Тайманұлы бастаған көтеріліс кезінде болған оқиға", r:"Событие, произошедшее в октябре 1837 года во время восстания Исатая Тайманулы", e:"Event that occurred in October 1837 during Isatay Taymanuly's uprising", a:{k:["Қырғыз жеріне жорық жасалды","Ақмола бекінісі өртелді","Хан ордасы қоршауда қалды","Красногорға шабуылдады"], r:["Поход на киргизские земли","Сожжение Акмолинской крепости","Осада Ханской ставки","Нападение на Красногор"], e:["Expedition to Kyrgyz lands","Burning of Akmola fort","Siege of Khan's headquarters","Attack on Krasnogor"]}, c:2 },
+            { k:"1837 жылы хан сарайын қоршауға алғандағы көтерілісшілердің саны", r:"Количество повстанцев при осаде ханского дворца в 1837 году", e:"Number of rebels during the siege of the Khan's palace in 1837", a:{k:["10 мың","3 мың","6 мың","2 мың"], r:["10 тысяч","3 тысячи","6 тысяч","2 тысячи"], e:["10 thousand","3 thousand","6 thousand","2 thousand"]}, c:1 },
+            { k:"1837 жылы 15 қарашада Исатай әскерімен жазалаушы отрядтар арасындағы шайқас", r:"Битва между войском Исатая и карательными отрядами 15 ноября 1837 года", e:"Battle between Isatay's army and punitive detachments on Nov 15, 1837", a:{k:["Теректіқұм шайқасы","Тастөбе шайқасы","Кекілік Сеңгір шайқасы","Ақбұлақ шайқасы"], r:["Битва при Теректикуме","Битва при Тастобе","Битва при Кекилик Сенгире","Битва при Акбулаке"], e:["Battle of Terektykum","Battle of Tastobe","Battle of Kekilik Sengir","Battle of Akbulak"]}, c:1 },
+            { k:"1836-1838 жылдардағы Тастөбе түбіндегі шайқастың нәтижесі", r:"Результат битвы при Тастобе в 1836-1838 гг.", e:"The result of the Battle of Tastobe in 1836-1838", a:{k:["Махамбет Өтемісұлы жеңіске жетті","Көтерілісшілер Ақмоланы өртеп жіберді","Исатай Тайманұлы жеңіске жетті","Көтерілісшілер руларына тарап кетті"], r:["Махамбет Утемисулы победил","Повстанцы сожгли Акмолу","Исатай Тайманулы победил","Повстанцы разошлись по родам"], e:["Makhambet Utemisuly won","Rebels burned down Akmola","Isatay Taymanuly won","Rebels dispersed to their clans"]}, c:3 },
+            { k:"Патша үкіметінің Исатайды ұстап берушіге белгіленген сый мөлшері", r:"Размер вознаграждения, установленного царским правительством за поимку Исатая", e:"The amount of reward set by the tsarist government for the capture of Isatay", a:{k:["500 сом","3000 сом","1000 сом","600 cом"], r:["500 рублей","3000 рублей","1000 рублей","600 рублей"], e:["500 rubles","3000 rubles","1000 rubles","600 rubles"]}, c:2 },
+            { k:"1837 жылы 13 желтоқсанда Бөкей Ордасындағы көтеріліс барысында болған оқиға", r:"Событие 13 декабря 1837 года в ходе восстания в Букеевской Орде", e:"Event on Dec 13, 1837, during the Bukey Horde uprising", a:{k:["Теректіқұм жайлауында жиналды","Хан ордасы екі апталық қоршауды бастады","Көтерілісшілер Жайық өзенінен өтті","Ақбұлақ шайқасында жеңіліске ұшырады"], r:["Сбор на жайляу Теректикум","Начало двухнедельной осады Ханской ставки","Повстанцы перешли через реку Урал (Жайык)","Поражение в битве при Акбулаке"], e:["Gathering at Terektykum pasture","Start of the two-week siege of Khan's HQ","Rebels crossed the Zhayik river","Defeat in the Battle of Akbulak"]}, c:2 },
+            { k:"Исатай Тайманұлы көтеріліс барысында күш біріктірген сұлтан", r:"Султан, с которым Исатай Тайманулы объединил силы в ходе восстания", e:"The Sultan with whom Isatay Taymanuly joined forces during the uprising", a:{k:["Қарауылқожа Бабажанұлы","Балқы Құдайбергенұлы","Баймағамбет Айшуақұлы","Қайыпқали Есімұлы"], r:["Караулкожа Бабажанулы","Балкы Кудайбергенулы","Баймагамбет Айшуакулы","Каипкали Есимулы"], e:["Karaulkozha Babajanuly","Balky Kudaybergenuly","Baymagambet Aishuakuly","Kaipkali Esimuly"]}, c:3 },
+            { k:"Қайыпқали Есімұлы көтерілісінен Кенесары Қасымұлы көтерілісінің ерекшелігі", r:"Отличие восстания Кенесары Касымулы от восстания Каипкали Есимулы", e:"Difference of Kenesary Kasymuly's uprising from Kaipkali Esimuly's", a:{k:["Елек маңындағы бекіністерге қарсы болды","Флотилия құрып шайқасты","Бөкей Ордасы аумағында болды","Үш жүздің басын қосты"], r:["Было против крепостей у Илека","Сражались, создав флотилию","Было на территории Букеевской Орды","Объединило три жуза"], e:["Was against forts near Ilek","Fought by creating a flotilla","Was in the Bukey Horde territory","United the three zhuzes"]}, c:3 },
+            { k:"Исатайдың Кіші жүзге өтуі кезімен тұспа-тұс келген көтеріліс", r:"Восстание, совпавшее по времени с переходом Исатая в Младший жуз", e:"The uprising that coincided with Isatay's transition to the Junior Zhuz", a:{k:["Сырым Датұлы","Есет Көтібарұлы","Жанқожа Нұрмұхамедұлы","Кенесары Қасымұлы"], r:["Сырым Датов","Есет Котибарулы","Жанкожа Нурмухамедулы","Кенесары Касымулы"], e:["Syrym Datuly","Eset Kotibaruly","Zhankozha Nurmukhameduly","Kenesary Kasymuly"]}, c:3 },
+            { k:"Исатай көтерілісін тездетіп басуға әсер еткен жағдай", r:"Обстоятельство, повлиявшее на ускорение подавления восстания Исатая", e:"The factor that influenced the rapid suppression of Isatay's uprising", a:{k:["Верный бекінісінің салынуы","Кенесары қозғалысының Кіші жүзді шарпуы","Ертіс бойындағы бекіністер","Сырым Датұлы көтерілісінің тоқтауы"], r:["Строительство крепости Верный","Распространение движения Кенесары на Младший жуз","Крепости вдоль Иртыша","Прекращение восстания Сырыма Датова"], e:["Construction of Verny fort","Kenesary's movement spreading to Junior Zhuz","Forts along Irtysh","End of Syrym Datuly's uprising"]}, c:1 },
+            { k:"Исатай Тайманұлы қазаға ұшыраған соңғы шайқас мерзімі", r:"Дата последней битвы, в которой погиб Исатай Тайманулы", e:"Date of the final battle in which Isatay Taymanuly died", a:{k:["1837 жылы қазан","1837 жылы қараша","1837 жылы желтоқсан","1838 жылы шілде"], r:["Октябрь 1837","Ноябрь 1837","Декабрь 1837","Июль 1838"], e:["October 1837","November 1837","December 1837","July 1838"]}, c:3 },
+            { k:"1838 жылы болған оқиға", r:"Событие, произошедшее в 1838 году", e:"Event that occurred in 1838", a:{k:["Тастөбе жеріндегі шайқас","Итішпес Алакөл жеріндегі шайқас","Кекілік Сеңгір шатқалындағы шайқас","Ақбұлақ өзені бойындағы шайқас"], r:["Битва при Тастобе","Битва при Итишпес Алаколь","Битва в ущелье Кекилик Сенгир","Битва на реке Акбулак"], e:["Battle of Tastobe","Battle of Itishpes Alakol","Battle of Kekilik Sengir","Battle of Akbulak"]}, c:3 },
+            { k:"Исатай Тайманұлы қаза тапқан шайқас", r:"Битва, в которой погиб Исатай Тайманулы", e:"The battle in which Isatay Taymanuly died", a:{k:["Майтөбе","Орбұлақ","Ақбұлақ","Бұланты"], r:["Майтобе","Орбулак","Акбулак","Буланты"], e:["Maitobe","Orbulak","Akbulak","Bulanty"]}, c:2 },
+            { k:"Бөкей Ордасындағы көтеріліс кезіндегі ірі шайқастар", r:"Крупные сражения во время восстания в Букеевской Орде", e:"Major battles during the Bukey Horde uprising", a:{k:["Орбұлақ, Шүршітқырылған шайқастары","Бұланты, Аңырақай шайқастары","Ақмола, Кекілік Сеңгір шайқастары","Тастөбе, Ақбұлақ шайқастары"], r:["Битвы при Орбулаке, Шуршуткурылгане","Битвы при Буланты, Аныракае","Битвы при Акмоле, Кекилик Сенгире","Битвы при Тастобе, Акбулаке"], e:["Battles of Orbulak, Shurshutkyrylgan","Battles of Bulanty, Anyrakay","Battles of Akmola, Kekilik Sengir","Battles of Tastobe, Akbulak"]}, c:3 },
+            { k:"Исатай мен Махамбет көтерілісін басуға жетекшілік еткен генерал-губернатор", r:"Генерал-губернатор, руководивший подавлением восстания Исатая и Махамбета", e:"The Governor-General who led the suppression of the uprising", a:{k:["П.Эссен","О.Игельстром","М.Сперанский","В.Перовский"], r:["П. Эссен","О. Игельстром","М. Сперанский","В. Перовский"], e:["P. Essen","O. Igelstrom","M. Speransky","V. Perovsky"]}, c:3 },
+            { k:"Исатай Тайманұлы көтерілісінің салдарына жатпайды", r:"Не относится к последствиям восстания Исатая Тайманулы", e:"Does NOT belong to the consequences of Isatay's uprising", a:{k:["Махамбет Өтемісұлы Хиуаға кетті","Бөкей Ордасы көтерілісі жеңілді","Исатай Тайманұлы қайтыс болды","Айқын бағдарламасы болмады"], r:["Махамбет Утемисулы уехал в Хиву","Восстание в Букеевской Орде проиграло","Исатай Тайманулы погиб","Не было четкой программы"], e:["Makhambet Utemisuly went to Khiva","Bukey Horde uprising lost","Isatay Taymanuly died","Lack of a clear program"]}, c:3 },
+            { k:"Исатай Тайманұлы көтерілісінің себебіне жатпайды", r:"Не относится к причинам восстания Исатая Тайманулы", e:"Does NOT belong to the causes of Isatay's uprising", a:{k:["Қарауылқожа Бабажанұлының лауазымды қызмет алуы","Юсупов пен Безбородько қазақ жерлерін алуы","Ақсүйектердің озбырлық жасауы","Старшындардың пікірімен санасу"], r:["Назначение Караулкожи на должность","Захват земель Юсуповым и Безбородько","Произвол знати","Учет мнения старшин"], e:["Appointment of Karaulkozha","Land seizure by Yusupov and Bezborodko","Tyranny of the elite","Considering elders' opinions"]}, c:3 },
+            { k:"Исатай Тайманұлы көтерілісінің жеңіліп қалуының басты себептерінің бірі", r:"Одна из главных причин поражения восстания Исатая Тайманулы", e:"One of the main reasons for the defeat of the uprising", a:{k:["Қырғыз жеріне жорық жасауы","Тек Ресей империясы әскерімен соғыс жүргізілді","Патша үкіметімен қатар хан билігіне қарсы күрес","Жәңгір ханға ғана қарсы күрес"], r:["Поход на киргизские земли","Война велась только с армией России","Борьба как против царизма, так и против хана","Борьба только против Жангир хана"], e:["Expedition to Kyrgyz lands","War fought only against Russian army","Struggle against both Tsar and Khan","Struggle only against Zhangir Khan"]}, c:2 },
+            { k:"1846 жылы дүниеден өткен батыр", r:"Батыр, ушедший из жизни в 1846 году", e:"Hero who passed away in 1846", a:{k:["Исатай Тайманұлы","Кенесары Қасымұлы","Махамбет Өтемісұлы","Сырым Датұлы"], r:["Исатай Тайманулы","Кенесары Касымулы","Махамбет Утемисулы","Сырым Датов"], e:["Isatay Taymanuly","Kenesary Kasymuly","Makhambet Utemisuly","Syrym Datuly"]}, c:2 },
+            { k:"Дұрыс дәйекті анықтаңыз.", r:"Определите верное утверждение.", e:"Identify the correct statement.", a:{k:["1838 ж. Ақбұлақ бойында шешуші шайқас өтті","Хорунжий Рытовты Исатай талқандады","1837 ж. Ақмолаға шабуыл жасалды","1841 ж. Исатай хан сайланды"], r:["1838 г. на Акбулаке произошло решающее сражение","Исатай разгромил хорунжего Рытова","В 1837 г. атакована Акмола","В 1841 г. Исатай избран ханом"], e:["1838 decisive battle at Akbulak","Isatay defeated Rytov","Akmola attacked in 1837","Isatay elected khan in 1841"]}, c:0 },
+            { k:"Оқиғалардың хронологиялық реттілігін анықтаңыз.", r:"Определите хронологическую последовательность событий.", e:"Determine the chronological sequence of events.", a:{k:["II, III, IV, I","I, III, II, IV","II, III, I, IV","I, II, III, IV"], r:["II, III, IV, I","I, III, II, IV","II, III, I, IV","I, II, III, IV"], e:["II, III, IV, I","I, III, II, IV","II, III, I, IV","I, II, III, IV"]}, c:2 }
+        ];
+
+        const translations = {
+            kk: {
+                navHome: "Басты бет", navComic: "Комикс", navQuiz: "Тест",
+                heroT: "АҚБҰЛАҚТЫҢ АЩЫ ЖАСЫ", heroD: "ЕРЕУІЛ АТҚА ЕР САЛҒАНДАРДЫҢ АМАНАТЫ", heroB: "Тестті бастау",
+                cards: [
+                    { t: "Исатай Тайманұлы", d: "Халық батыры, 1836-1838 жылдардағы көтеріліс басшысы.", l: ["Әділдігімен танылған.","Ақтабан тұлпарының иесі.","Ақбұлақ шайқасында қаза тапты."] },
+                    { t: "Махамбет Өтемісұлы", d: "Жалынды ақын, күйші, көтерілістің рух берушісі.", l: ["Өлеңдері халықты жігерлендірді.","Орыс тілін білген білімді тұлға.","Күйлері бүгінге дейін жеткен."] },
+                    { t: "Жәңгір хан", d: "Реформатор хан, Бөкей Ордасының билеушісі.", l: ["Алғаш мектеп ашты.","Мұражай мен кітапхана негізін қалады.","Реформалары қарапайым халыққа ауыр тиді."] },
+                    { t: "Көтерілістің жеңілу себептері", d: "", l: ["1. Қару-жарақтың теңсіздігі: Садақ пен найзаға қарсы зеңбірек пен мылтық қолданылды.","2. Біртұтас жоспардың болмауы: Көтеріліс көбіне стихиялы сипатта болды.","3. Локалдылық: Көтеріліс тек Бөкей Ордасы мен Кіші жүздің бір бөлігін ғана қамтыды."] },
+                    { t: "Маңызы", d: "", l: ["Бұл көтеріліс патша үкіметі мен хан билігін сескендірді. Нәтижесінде салықтар біршама реттелді, ал ең бастысы — Махамбеттің жырлары арқылы халықтың азаттық рухы оянды. Бұл болашақ ұлт-азаттық қозғалыстарға (мысалы, Кенесары хан көтерілісіне) үлкен әсерін тигізді."] }
+                ],
+                comT: "Махамбет Комиксі", comD: "Махамбет Өтемісұлының ерлігі мен өр рухын бейнелейтін графикалық туындыны оқыңыз.",
+                qT: "Бөкей Ордасы: 1836-1838 жж. көтеріліс", qP: "Сұрақ", rT: "Тест аяқталды!", rB: "Қайта бастау"
+            },
+            ru: {
+                navHome: "Главная", navComic: "Комикс", navQuiz: "Тест",
+                heroT: "ГОРЬКИЕ СЛЕЗЫ АКБУЛАКА", heroD: "ЗАВЕТ ТЕХ, КТО ОСЕДЛАЛ КОНЕЙ ДЛЯ ВОССТАНИЯ", heroB: "Начать тест",
+                cards: [
+                    { t: "Исатай Тайманулы", d: "Народный батыр, предводитель восстания 1836-1838 гг.", l: ["Известен справедливостью.","Владелец коня Актабан.","Погиб в битве при Акбулаке."] },
+                    { t: "Махамбет Утемисулы", d: "Пламенный поэт, кюйши, вдохновитель восстания.", l: ["Его стихи воодушевляли народ.","Знал русский язык.","Его кюи исполняются до сих пор."] },
+                    { t: "Жангир хан", d: "Хан-реформатор, правитель Букеевской Орды.", l: ["Открыл первую школу.","Основал музей и библиотеку.","Его реформы были тяжелы для народа."] },
+                    { t: "Причины поражения восстания", d: "", l: ["1. Неравенство вооружения: пушки и ружья против луков и копий.","2. Отсутствие единого плана: восстание носило стихийный характер.","3. Локальность: восстание охватило лишь часть территорий."] },
+                    { t: "Значение", d: "", l: ["Это восстание встревожило власть. В результате налоги были частично упорядочены, а главное — через стихи Махамбета пробудился дух свободы. Это повлияло на будущие движения (например, восстание Кенесары)."] }
+                ],
+                comT: "Комикс Махамбет", comD: "Читайте графический роман о мужестве Махамбета.",
+                qT: "Букеевская Орда: Восстание 1836-1838 гг.", qP: "Вопрос", rT: "Тест завершен!", rB: "Начать заново"
+            },
+            en: {
+                navHome: "Home", navComic: "Comic", navQuiz: "Quiz",
+                heroT: "BITTER TEARS OF AKBULAK", heroD: "LEGACY OF THOSE WHO SADDLED HORSES", heroB: "Start Quiz",
+                cards: [
+                    { t: "Isatay Taymanuly", d: "People's hero, leader of the 1836-1838 uprising.", l: ["Famous for fairness.","Owner of horse Aktaban.","Died in the Battle of Akbulak."] },
+                    { t: "Makhambet Utemisuly", d: "Fiery poet, composer, the spirit of the rebellion.", l: ["Poems inspired the people.","Educated, knew Russian.","His musical works live on."] },
+                    { t: "Zhangir Khan", d: "Reforming Khan, ruler of the Bukey Horde.", l: ["Opened the first school.","Founded museum and library.","His reforms were hard for the commoners."] },
+                    { t: "Reasons for Defeat", d: "", l: ["1. Weapons inequality: cannons vs bows.","2. Lack of plan: revolt was spontaneous.","3. Locality: limited geographical reach."] },
+                    { t: "Significance", d: "", l: ["Alarmed the Tsar and Khan. Taxes were regulated. Makhambet's poems awakened the spirit of freedom, influencing future movements like Kenesary's revolt."] }
+                ],
+                comT: "Makhambet Comic", comD: "Read the graphic novel about Makhambet's spirit.",
+                qT: "Bukey Horde: Uprising 1836-1838", qP: "Question", rT: "Quiz Finished!", rB: "Restart"
+            }
+        };
+
+        let currentLang = 'kk';
+        let currentIdx = 0;
+        let score = 0;
+        let canAnswer = true;
+
+        function setLang(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`lang-${lang}`).classList.add('active');
+
+            document.getElementById('nav-home').innerText = t.navHome;
+            document.getElementById('nav-comic').innerText = t.navComic;
+            document.getElementById('nav-quiz').innerText = t.navQuiz;
+            document.getElementById('hero-title').innerText = t.heroT;
+            document.getElementById('hero-desc').innerText = t.heroD;
+            document.getElementById('hero-btn').innerText = t.heroB;
+            
+            const cardsContainer = document.getElementById('dynamic-cards');
+            cardsContainer.innerHTML = '';
+            t.cards.forEach(card => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'info-card';
+                cardDiv.innerHTML = `<h3>${card.t}</h3><p>${card.d}</p><ul>${card.l.map(i => `<li>${i}</li>`).join('')}</ul>`;
+                cardsContainer.appendChild(cardDiv);
+            });
+
+            document.getElementById('com-title').innerText = t.comT;
+            document.getElementById('com-desc').innerText = t.comD;
+            document.getElementById('quiz-title').innerText = t.qT;
+            document.getElementById('res-title').innerText = t.rT;
+            document.getElementById('res-btn').innerText = t.rB;
+
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            if(currentIdx >= quizData.length) { showResults(); return; }
+            canAnswer = true;
+            const q = quizData[currentIdx];
+            const t = translations[currentLang];
+            document.getElementById('quiz-progress').innerText = `${t.qP}: ${currentIdx + 1} / ${quizData.length}`;
+            document.getElementById('question-text').innerText = currentLang === 'kk' ? q.k : (currentLang === 'ru' ? q.r : q.e);
+            const optionsBox = document.getElementById('options-box');
+            optionsBox.innerHTML = '';
+            const opts = currentLang === 'kk' ? q.a.k : (currentLang === 'ru' ? q.a.r : q.a.e);
+            opts.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(index);
+                optionsBox.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(idx) {
+            if(!canAnswer) return;
+            canAnswer = false;
+            const correct = quizData[currentIdx].c;
+            const btns = document.querySelectorAll('.option-btn');
+            if(idx === correct) { btns[idx].classList.add('correct'); score++; }
+            else { btns[idx].classList.add('wrong'); btns[correct].classList.add('correct'); }
+            setTimeout(() => { currentIdx++; renderQuestion(); }, 800);
+        }
+
+        function showResults() {
+            document.getElementById('quiz-box').style.display = 'none';
+            document.getElementById('result-box').style.display = 'block';
+            document.getElementById('final-score').innerText = `${score} / ${quizData.length}`;
+        }
+
+        function restartQuiz() {
+            currentIdx = 0; score = 0;
+            document.getElementById('quiz-box').style.display = 'block';
+            document.getElementById('result-box').style.display = 'none';
+            renderQuestion();
+        }
+
+        function nav(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        setLang('kk');
+    </script>
+</body>
+</html>
